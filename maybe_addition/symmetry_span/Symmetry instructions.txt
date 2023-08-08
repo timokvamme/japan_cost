@@ -1,0 +1,298 @@
+################## 1 #####################
+In this experiment you will try to memorize the position of colored squares you see on the screen while you also make judgments about other pictures.
+
+In the next few minutes, you will have som practive to get you familiar with how the experiment works.
+
+We will begin by practicing the "square" part of the experiment
+
+Click the mouse to continue.
+
+# DK
+I dette eksperiment skal du huske placeringen af farvede firkanter på skærmen, samtidig med at du foretager vurderinger af nogle billeder.
+
+I de næste minutter får du nogle øvelser, som gør dig bekendt med, hvordan eksperimentet fungerer.
+
+Vi begynder med at øve "placering" delen af eksperimentet.
+
+
+
+##################### 2 #####################
+For this practice set, squares will appear on the screen one at a time. 
+
+Try to remember where each square was, in the order it was presented in.
+
+After 2-5 squares have been shown, you will se a grid of the 16 possible places the squares coulld have been.
+
+Your job is to select each square in the order presented. To do this, use the mouse to select the appropriate boxes. The square you select will turn red.
+
+Clic the mouse button to continue.
+
+# DK
+I dette øvelsesset vil firkanterne blive vist én ad gangen på skærmen.
+
+Prøv at huske hvor hver firkant var, i den rækkefølge de blev præsenteret i.
+
+Efter at 2-5 firkanter er vist, vil du se et gitter med de 16 mulige placeringer hvor firkanterne kunne have været.
+
+Din opgave er at vælge hver placering i den rækkefølge, de blev præsenteret. Klik med musen på de passende felter. Det valgte felt bliver rødt.
+
+[mus]
+
+
+################### 3 #####################
+When you have selected all the squares, and they are in the correct order, hit the ENTER box at the bottom right of the screen.
+
+If you make a mistake, hit the CLEAR box to start over.
+
+If you forget one of teh squares, click the BLANK box to mark the spot for the missing square.
+
+Remember, it is very important to get the squraes in the same order as you see them. If you forget one, use the BLANK box to mark the position.
+
+Please ask the experimenter any questions you may have at this time.
+
+When you are ready, click the mouse button to start the square practice.
+
+# DK
+Når du har valgt alle firkanterne og de er i den rigtige rækkefølge, tryk på SVAR knappen nederst til højre på skærmen.
+
+Tryk på SLET ALT knappen hvis du laver en fejl og begynd så forfra.
+
+Tryk på BLANK hvis du glemmer en af placeringerne for at markere hvor i rækkefølgen du har glemt.
+
+Husk, det er meget vigtigt at markere placeringerne i samme rækkefølge, som du ser dem. Hvis du glemmer én, så brug BLANK knappen til at markere stedet i rækkefølgen.
+
+[spørg]
+
+[mus]
+
+
+################### ANSWER ################
+Select the squares in the order presented. Use the blank button to fill in forgotten squares.
+
+# DK
+
+Vælg felterne i den rækkefølge, de blev vist. Brug BLANK knappen til glemte placeringer.
+
+
+################# FEEDBACK ################
+You recalled 2 squares correctly out of 2.
+
+# DK
+
+Du huskede 2 placeringer korrekt ud af 2.
+
+
+################ INSTRUCT #################
+Now you will practice doing the symmetry part of the experiment.
+
+A picture will appear on the screen, and you will have to decide if it is symmetrical. A picture is symmetrical if you can fold it in half vertically and the picture on the left lines up with the picture on the rigth. On the next screen you will see a picture that 
+IS SYMMETRICAL.
+
+Clic the mouse to continue.
+
+# DK
+
+Nu skal du øve symmetri-delen af eksperimentet.
+
+Der bliver vist et billede på skærmen, og du skal svare, om det er symmetrisk. Et billede er symmetrisk hvis det kan foldes langs en lodret midterlinje og den venstre del passer med den højre del. Med andre ord, billedet er symmetrisk hvis venstre og højre side er hinandens spejlbilleder. På næste skærm ser du et billede der ER SYMMETRISK.
+
+
+################ INSTRUCT ################
+(image)
+
+Notice that this picture is symmetrical about the red line.
+
+In the real pictures the red line will not be present.
+
+Click the mouse to continue.
+
+# DK
+Bemærk at dette billede er symmetrisk om den røde linje
+
+I de rigtige billeder vil der ikke blive vist en rød linje.
+
+
+############## INSTRUCT ################3
+Here, the picture is NOT symmetrical.
+
+If you folded this across the red line, boxes would NOT line up.
+
+Clic the mouse to continue.
+
+# DK
+Dette billede er IKKE symmetrisk.
+
+Hvis du foldede dette billede langs den røde linje, ville boksene IKKE passe sammen.
+
+
+############### INSTRUCT #############
+THis is another example of a picture that IS symmetrical.
+
+If you folded it vertically, the two sides would line up.
+
+Click the mouse to continue.
+
+#DK
+Dette er et andet eksempel på et billede, der ER symmetrisk.
+
+Hvis du foldede det vertikalt, ville de to sider passe sammen.
+
+############### INSTRUCT #############
+Here is another example of a picture that is NOT symmetrical.
+
+Notice that if folded, the two sides would not line up.
+
+If you have any questions about how symmetry works, please ask them now.
+
+Click the mouse to continue.
+
+# DK
+Her er et andet eksempel på et billede, der IKKE er symmetrisk.
+
+Læg mærke til, at hvis det blev foldet, ville de to sider ikke matche.
+
+Hvis du har spørgsmål til hvordan symmetri virker, skal du stille dem nu.
+
+
+############## INSTRUCT ###############
+Once you have decided if a picture is symmetrical, click the mouse.
+
+On the next screen a YES and NO box will appear.
+
+If the picture you saw was symmetrical, click the YES box. If it was not symmetrical, click the NO box.
+
+After you click on one of the boxes, the computer will tell you if you made the right choice.
+
+Click the mouse to continue.
+
+#DK
+Klik på musen når du har besluttet dig for, om billedet er symmetrisk.
+
+På næste skærmbillede er der en JA knap og et NEJ knap.
+
+Klik på JA knappen hvis billedet, du så, var symmetrisk. Klik på NEJ knappen hvis billedet ikke var symmetrisk.
+
+Efter at du har klikket på en af boksene vil computeren fortælle dig, om du træf det rigtige valg.
+
+
+############## INSTRUCT ##############
+It is VERY important that you get the pictures correct.
+
+Please ask the experimenter any questions you may have at this time.
+
+When you are ready, clic kthe mouse to try some practice problems.
+
+#DK
+Det er MEGET vigtigt at du svarer korrekt på billederne.
+
+Spørg venligst, hvis du har nogle spørgsmål.
+
+Vi går nu videre til nogle øvelser med symmetri.
+
+
+######## SYMMETRY QUESTION ###########
+Is this symmetrical?
+(YES NO)
+
+#DK
+Er det symmetrisk?
+
+
+
+########### INSTRUCTION FOR TEAL TASK #############
+Now you will practice doing both parts of the experiment at the same time.
+
+In the next practice set, you will be given one of the symmetry problems. Once you make your decision about the picture, a square will appear on the screen. Try and remember the position of the square.
+
+In the previous section where you only decided about the picture symmetry, the computer computed your averatge time to solve the problems. If you take longer than your average time, yhe computer will automatically move you onto the square part, thus skipping the YES or NO part and will count that problem as an error. THerefore it is VERY important to solve the problems as quickly and as accurately as possible.
+
+Click the mouse to continue.
+
+#DK
+Du skal nu øve begge dele af eksperimentet på én gang.
+
+I de næste øvelser bliver du vist en af symmetriopgaverne. Når du har truffet dit valg om billedet, vil en firkant-placering blive vist på skærmen. Prøv at huske placeringen af firkanten.
+
+I de tidligere symmetriproblemer beregnede computeren den gennemsnitlige tid det tog for dig at løse problemerne. Hvis du bruger længere end denne tid, vil computeren automatisk gå videre til firkant-delen, uden at spørge JA/NEJ til symmetri-problemet, og registrere det som en fejl. Det er derfor MEGET vigtigt at løse problemet så hurtigt og præcist som muligt.
+
+############## INSTRUCT #############3
+After hte square goes away, anoter symmetry picture will appear, and then another square.
+
+At the end of each set of pictures and squares, a recall screen will appear. Use the mouse to select the squares you just saw. Try your best to get the squares in the correct order.
+
+It is important to work QUICKLY and ACCURATELY.
+
+You will not be told if your answer to the symmetry picture is correct.
+
+But, after the square recall screen, you will be given feedback about your performance regarding bot the number of squares recalled and the percent correct on the symmetry problems.
+
+Please ask the experimenter any questions you may have at this time.
+
+Click the mouse to continue.
+
+#DK
+Efter firkanten forsvinder, vises der et andet symmetri-billede og igen en anden firkant.
+
+Efter denne række af billeder og firkanter skal du genkalde hvilke placeringer firkanten blev vist på. Brug musen til at vælge disse placeringer. Gør dit bedste for at få firkanterne markeret i den rigtige rækkefølge.
+
+Det er vigtigt at du arbejder HURTIGT og PRÆCIST.
+
+Du vil ikke få at vide, om dit svar til symmetri-billedet var korrekt.
+
+Efter genkaldelses-delen vil du dog få feedback på din præstation, både med antallet af firkanter og procent korrekthed på symmetri-problemerne.
+
+Spørg venligst, hvis du er i tvivl om noget.
+
+
+############# INSTRUCT #############
+
+During the feedback, you will see a number in red in the top right of the screen.
+
+This inducates you precent correct for the symmetry pictures for the entire experiment.
+
+It is VERY important for you to keep this at least at 85%.
+
+For our purposes, we can only use your data if you are at least 85% accurate on the symmety pictures.
+
+Therefore, in order for you to be asked to come back for future experiments, you must perform at least at 85% on the symmetry problems WHILE doing your best to recall as many squares as possible.
+
+Please ask the experimenter any questions you may have at this time.
+
+Click the mouse to continue.
+
+#DK
+Under feedbacken er der et rødt tal i øverste højre hjørne af skærmen.
+
+Det viser hvor mange procent af symmetriproblemerne du har løst korrekt igennem hele eksperimentet.
+
+Det er MEGET vigtigt, at du holder dette tal på mindst 85%
+
+Vi kan kun bruge dine data hvis du har mindst 85% korrekt på symmetri-billederne. Derfor skal du svare rigtigt på mindst 85% af symmetri-billederne SAMTIDIGT med at du gør dit bedste for at huske så mange firkanter som muligt.
+
+Spørg venligst, hvis du er i tvivl om noget.
+
+
+############ INSTRUCT #############3
+This is the end of the practice.
+
+The real trials will look just lke the practice trials you just completed. Some sets will have more problems than others.
+
+It is importaht that you do your best on both the symmetry and the square parts of this experiment.
+
+Also, remember to keep your symmetry accuracy at 85% or aboce.
+
+Please click the mouse to begin the experiment.
+
+# DK
+Øvelserne er slut nu.
+
+Det rigtige eksperiment er ligesom de øvelser du netop har gennemgået. Nogle symmetri-firkant sekvenser er længere end andre.
+
+Det er vigtigt, at du gør dit bedste på både symmetri- og firkant-opgaverne.
+
+Husk også at holde din symmetri-korrekthed over 85%.
+
+############ TASK ################
+You recalled 2 out of 2 squares correctly
+
+You made X symmetry error(s) on this [trial?]
