@@ -1,0 +1,28 @@
+This package was provided by Hiro Taiyo Hamada who got it from Hao Chen
+and was unziped by Timo Kvamme- 24/07/2023
+
+I also downloaded and put the https://www.palamedestoolbox.org/download.html
+into the folder. remeber to addpath in matlab
+
+the ahk script  kill_ptb.ahk, can be used to kill ptb. 
+download ahk here.  https://www.autohotkey.com  and install. 
+
+
+in run_all i set: 
+if screen.nominalFrameRate ~= 60
+if screen.nominalFrameRate ~= 100 
+is correct!. 
+
+it should be 100 hz
+
+hz=100 in the beginning in run_all.
+
+
+In the individual scripts i removed the test of hz:
+
+        %if screen.nominalFrameRate ~= 60
+        %    error('fresh rate is not 100 !');
+        %end	
+
+by commenting out.
+thats because i needed to test it on a 60 hz

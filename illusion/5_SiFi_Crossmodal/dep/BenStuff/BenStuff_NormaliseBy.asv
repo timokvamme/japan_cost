@@ -1,0 +1,26 @@
+function [ YNormalisedByX ] = BenStuff_NormaliseBy( X,Y )
+% [ YNormalisedByX ] = BenStuff_NormaliseBy( X,Y ) z-normalises columns of Y according to means and SDs of columns in X 
+%   X and Y need to have same number of columns
+%
+%   found a bug? please let me know!
+%   benjamindehaas@gmail.com 28/2/2012
+
+if nargin~=2 % check number of matrices provided
+    error('Please specify a matrix to normalise and a matrix to get means and SDs from');
+end
+
+if ndims(X)~=2 || ndims(Y)~=2 % check dimensionality
+    error('X and Y need to be 2-dimensional');
+end
+
+SizeComp=size(X)==size(Y);%compare number of columns
+if ~SizeComp(2)
+    error('');
+
+% All fine? Let's go!
+[Xzscored, XMeans, XSDs]=zscore(X);
+YMinMean= bsxfun(@minus,Y, XMeans);%substract means of X from each row of Y
+YNormalisedByX=bsxfun(@rdivide,YMinMean, XSDs);%divide result by SDs of X (again, apply to each row of Y)
+
+end
+

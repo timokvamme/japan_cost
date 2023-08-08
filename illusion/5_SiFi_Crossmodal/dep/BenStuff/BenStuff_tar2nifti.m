@@ -1,0 +1,60 @@
+function BenStuff_tar2nifti( TarFiles, OutDir )
+%   BenStuff_tar2nifti( TarFile, OutDir )
+%   tar2nifti extract tar'd dicoms and convert to nifti
+%   extracted dicoms are deleted after conversion to nii
+%   uses SPM job manager (i.e. needs SPM)
+%   
+%   TarFiles: compressed dicom files - !!provide a cellstring!!
+%   OutDir: directory where .niis should go
+%
+%   found a bug? please let me know benjamindehaas@gmail.com
+    
+
+    if nargin<2 %if you didn't provide OutDir, assume current directory
+        OutDir=pwd;
+    end
+    
+    TmpDir=[OutDir filesep 'BenStuff_tmp'];%create a temporary directory for extracted dicoms
+    if exist(TmpDir)
+        rmdir(TmpDir, 's');%clear up if neccesary
+    end
+    mkdir(TmpDir);
+     
+    %% extract files
+    for TarFileNo=1:length(TarFiles)
+        CurrentTarFile=TarFiles{TarFileNo};
+        untar(CurrentTarFile, TmpDir);
+    end
+    
+    %% Convert
+    StartingDir=pwd;%where are we right now?
+    
+    cd(TmpDir);
+    Dicoms=dir(['*.ima']);
+    for DicomNo=1:size(Dicoms,1)
+        Dicoms(DicomNo).name=[TmpDir filesep Dicoms(DicomNo).name]
+    end
+    
+    DicomsCell={Dicoms.name};
+    
+    BatchNo=1;
+    matlabbatch{BatchNo}.spm.util.dicom.data = DicomsCell;
+    matlabbatch{BatchNo}.spm.util.dicom.root = 'flat';
+    matlabbatch{BatchNo}.spm.util.dicom.outdir = {[OutDir filesep]};
+    matlabbatch{BatchNo}.spm.util.dicom.convopts.format = 'nii';
+    matlabbatch{BatchNo}.spm.util.dicom.convopts.icedims = 0;
+    % Run the batch
+    spm_jobman('run_nogui', matlabbatch);
+    clear matlabbatch 
+    
+    cd(StartingDir);%go back to where you started
+    
+    %% clear up
+    rmdir(TmpDir, 's');
+    
+end
+
+
+    
+    
+
