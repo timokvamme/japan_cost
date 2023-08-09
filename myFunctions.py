@@ -58,6 +58,11 @@ def get_parent_folder_from_path(path):
     path = pathlib.Path(path)
     return path.parent.absolute()
 
+def closest_value(input_list, input_value):
+  arr = np.asarray(input_list)
+  i = (np.abs(arr - input_value)).argmin()
+
+  return arr[i]
 
 def panic_print(msg="panicPrint"):
     print("------------------------------------------------")

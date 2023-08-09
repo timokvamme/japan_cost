@@ -83,7 +83,7 @@ class BRT_experiment(BRT_settings):
         dlg.addField("ET", self.ET)
         dlg.addField("testMode", self.testMode)
         dlg.addField('Language', choices=self.defaultLanguages)
-        dlg.addField('viewMode', choices=self.viewMode)
+        dlg.addField('viewMode', choices=self.viewModes)
         dlg.addField('rateVivid', self.rateVivid)
         dlg.addField('eyeDom', choices=self.eyeDomChoices)
         dlg.show()
@@ -179,6 +179,15 @@ class BRT_experiment(BRT_settings):
 
                 print("could not find subject values for horizontal adjust reruning")
                 self.doBRHorizontalAdjust = True
+
+        self.gabor_center = visual.ImageStim(
+                win=self.win,
+                name='image_1',
+                image=pathjoin(self.stimuliFolder,'gabor_r60_b100.png'), mask=None,
+                ori=0, pos=self.posCenter, size=self.sizeGabor,
+                color=[1,1,1], colorSpace='rgb', opacity=0.8,
+                flipHoriz=False, flipVert=False,
+                texRes=128, interpolate=True, depth=-2.0)
 
 
         self.gabor_red = visual.ImageStim(
@@ -539,6 +548,10 @@ class BRT_experiment(BRT_settings):
             if "instruct" not in phase:
                 x = 1
 
+            if self.viewMode == "googles":
+                bo,ro = self.find_best_contrast_img(self.gabor_blue_opacity,self.gabor_red_opacity)
+                contrast_img = pathjoin(self.stimuliFolder,paste("gabor_r",ro,"_","b",bo,".png",sep=""))
+
 
             trial = {
                 'id': self.subjectID,
@@ -551,6 +564,7 @@ class BRT_experiment(BRT_settings):
                 'iti': self.iti,
                 'contrast_blue':self.gabor_blue_opacity,
                 'contrast_red': self.gabor_red_opacity,
+                'img':contrast_img if self.viewMode == "googles" else np.nan,
                 'contrast2_blue':  np.nan,
                 'contrast2_red':  np.nan,
                 'lum_left': np.nan,
@@ -587,75 +601,144 @@ class BRT_experiment(BRT_settings):
         # Prepare stimuli: set images
 
 
-        if trial["type"] == "img":
-            # location
-            if trial["loc"] == "BR":
-                self.gabor_blue.pos = self.leftPosCalc
-                self.gabor_red.pos = self.rightPosCalc
-            elif trial["loc"] == "RB":
-                self.gabor_blue.pos = self.rightPosCalc
-                self.gabor_red.pos = self.leftPosCalc
+        if self.viewMode == "mirrors":
+            if trial["type"] == "img":
+                # location
+                if trial["loc"] == "BR":
+                    self.gabor_blue.pos = self.leftPosCalc
+                    self.gabor_red.pos = self.rightPosCalc
+                elif trial["loc"] == "RB":
+                    self.gabor_blue.pos = self.rightPosCalc
+                    self.gabor_red.pos = self.leftPosCalc
+                else:
+                    print("inccorect loc set in make_stimulus")
+
+                # contrast / opacity
+                self.gabor_blue.opacity = self.gabor_blue_opacity
+                self.gabor_red.opacity = self.gabor_red_opacity
+
+                print("red: %s"% self.gabor_red.opacity)
+                print("blue: %s" % self.gabor_blue.opacity)
+
+                self.win.clearBuffer()
+                self.gabor_red.draw()
+                self.gabor_blue.draw()
+
+                self.stim = visual.BufferImageStim(self.win)
+                self.win.clearBuffer()
+
+            elif trial["type"] == "adaptation":
+                # location
+                if trial["loc"] == "BR":
+                    self.gabor_blue.pos = self.leftPosCalc
+                    self.gabor_red.pos = self.rightPosCalc
+                elif trial["loc"] == "RB":
+                    self.gabor_blue.pos = self.rightPosCalc
+                    self.gabor_red.pos = self.leftPosCalc
+                else:
+                    print("inccorect loc set in make_stimulus")
+
+                # contrast / opacity
+                self.gabor_blue.opacity = self.full_gabor_opacity
+                self.gabor_red.opacity = self.full_gabor_opacity
+
+
+                self.win.clearBuffer()
+                if trial["domAns"] == "red":
+                    self.gabor_red.pos = self.leftPosCalc
+                    self.gabor_red.draw()
+                    self.gabor_red.pos = self.rightPosCalc
+                    self.gabor_red.draw()
+
+                if trial["domAns"] == "blue":
+                    self.gabor_blue.pos = self.leftPosCalc
+                    self.gabor_blue.draw()
+                    self.gabor_blue.pos = self.rightPosCalc
+                    self.gabor_blue.draw()
+
+                self.stim = visual.BufferImageStim(self.win)
+                self.win.clearBuffer()
+
+
+            elif trial["type"] == "mock":
+                if trial["no"] % 2 == 0:
+                    self.gabor_blue.opacity = self.full_gabor_opacity
+
+                    self.gabor_blue.pos = self.leftPosCalc
+                    self.gabor_blue.draw()
+                    self.gabor_blue.pos = self.rightPosCalc
+                    self.gabor_blue.draw()
+
+                else:
+                    self.gabor_red.opacity = self.full_gabor_opacity
+                    self.gabor_red.pos = self.leftPosCalc
+                    self.gabor_red.draw()
+                    self.gabor_red.pos = self.rightPosCalc
+                    self.gabor_red.draw()
+
             else:
-                print("inccorect loc set in make_stimulus")
-
-            # contrast / opacity
-            self.gabor_blue.opacity = self.gabor_blue_opacity
-            self.gabor_red.opacity = self.gabor_red_opacity
-
-            self.win.clearBuffer()
-            self.gabor_blue.draw()
-            self.gabor_red.draw()
-            self.stim = visual.BufferImageStim(self.win)
-            self.win.clearBuffer()
-
-        elif trial["type"] == "adaptation":
-            # location
-            if trial["loc"] == "BR":
-                self.gabor_blue.pos = self.leftPosCalc
-                self.gabor_red.pos = self.rightPosCalc
-            elif trial["loc"] == "RB":
-                self.gabor_blue.pos = self.rightPosCalc
-                self.gabor_red.pos = self.leftPosCalc
-            else:
-                print("inccorect loc set in make_stimulus")
-
-            # contrast / opacity
-            self.gabor_blue.opacity = self.full_gabor_opacity
-            self.gabor_red.opacity = self.full_gabor_opacity
-
-
-            self.win.clearBuffer()
-            if trial["domAns"] == "red":
-                self.gabor_red.pos = self.leftPosCalc
-                self.gabor_red.draw()
-                self.gabor_red.pos = self.rightPosCalc
-                self.gabor_red.draw()
-
-            if trial["domAns"] == "blue":
-                self.gabor_blue.pos = self.leftPosCalc
-                self.gabor_blue.draw()
-                self.gabor_blue.pos = self.rightPosCalc
-                self.gabor_blue.draw()
-
-            self.stim = visual.BufferImageStim(self.win)
-            self.win.clearBuffer()
-
-
-        elif trial["type"] == "mock":
-            if trial["no"] % 2 == 0:
-                self.gabor_blue.pos = self.leftPosCalc
-                self.gabor_blue.draw()
-                self.gabor_blue.pos = self.rightPosCalc
-                self.gabor_blue.draw()
-            else:
-                self.gabor_red.pos = self.leftPosCalc
-                self.gabor_red.draw()
-                self.gabor_red.pos = self.rightPosCalc
-                self.gabor_red.draw()
-
+                print("incorrect type of trial in make_stimulus")
         else:
-            print("incorrect type of trial in make_stimulus")
 
+            if trial["type"] == "img":
+
+                self.gabor_center.setImage(trial["img"])
+
+                self.win.clearBuffer()
+                self.gabor_center.draw()
+                self.stim = visual.BufferImageStim(self.win)
+                self.win.clearBuffer()
+
+            elif trial["type"] == "adaptation":
+                # location
+                if trial["loc"] == "BR":
+                    self.gabor_blue.pos = self.leftPosCalc
+                    self.gabor_red.pos = self.rightPosCalc
+                elif trial["loc"] == "RB":
+                    self.gabor_blue.pos = self.rightPosCalc
+                    self.gabor_red.pos = self.leftPosCalc
+                else:
+                    print("inccorect loc set in make_stimulus")
+
+                # contrast / opacity
+                self.gabor_blue.opacity = self.full_gabor_opacity
+                self.gabor_red.opacity = self.full_gabor_opacity
+
+                self.win.clearBuffer()
+                if trial["domAns"] == "red":
+                    self.gabor_red.pos = self.leftPosCalc
+                    self.gabor_red.draw()
+                    self.gabor_red.pos = self.rightPosCalc
+                    self.gabor_red.draw()
+
+                if trial["domAns"] == "blue":
+                    self.gabor_blue.pos = self.leftPosCalc
+                    self.gabor_blue.draw()
+                    self.gabor_blue.pos = self.rightPosCalc
+                    self.gabor_blue.draw()
+
+                self.stim = visual.BufferImageStim(self.win)
+                self.win.clearBuffer()
+
+
+            elif trial["type"] == "mock":
+                if trial["no"] % 2 == 0:
+                    self.gabor_blue.opacity = self.full_gabor_opacity
+
+                    self.gabor_blue.pos = self.leftPosCalc
+                    self.gabor_blue.draw()
+                    self.gabor_blue.pos = self.rightPosCalc
+                    self.gabor_blue.draw()
+
+                else:
+                    self.gabor_red.opacity = self.full_gabor_opacity
+                    self.gabor_red.pos = self.leftPosCalc
+                    self.gabor_red.draw()
+                    self.gabor_red.pos = self.rightPosCalc
+                    self.gabor_red.draw()
+
+            else:
+                print("incorrect type of trial in make_stimulus")
 
         return self.stim
 
@@ -701,6 +784,21 @@ class BRT_experiment(BRT_settings):
             self.win.clearBuffer()
 
         return self.prime
+
+
+    def find_best_contrast_img(self,bo,ro):
+        ixd = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        ixdd = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+
+        bo = closest_value([0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0], bo)
+        ro = closest_value([0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0], ro)
+
+        bo = ixd[ixdd.index(bo)]
+        ro = ixd[ixdd.index(ro)]
+
+        return bo, ro
+
+
 
     def make_imagery_circle(self,trial):
 
@@ -1384,7 +1482,8 @@ class BRT_experiment(BRT_settings):
 
 
                     elif resp[0] in self.scaleAcceptKeys:
-
+                        self.win.clearBuffer()
+                        self.win.flip()
                         calibrationComplete = True
                         bo = self.gabor_blue.opacity
                         ro = self.gabor_red.opacity
@@ -1405,7 +1504,7 @@ class BRT_experiment(BRT_settings):
                     print("blue: %s" % bo)
                     print("red: %s" % ro)
 
-                    instructText.text = "red: %s blue %s" % (ro, bo)
+
 
     def draw_text_instruct(self, text="text to present"):
 
@@ -1552,6 +1651,8 @@ class BRT_experiment(BRT_settings):
             trial["timeSecs"] = myClock.getTime()
             trial["trialInitTime"] =  myClock.getTime()
 
+            print(trial["type"])
+
             win.setMouseVisible(False)
 
             # Initial fixation cross ( right after ppt has responed)
@@ -1641,6 +1742,9 @@ def run_experiment():
 
         if BRT.calibrationBR:
             BRT.run_hfpi_calibrationBR()
+
+        if BRT.switchRateTest:
+            BRT.run_BRT_switch_rate(phase="BRT_switchrate")
 
 
 

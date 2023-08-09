@@ -285,7 +285,8 @@ class BRT_settings():
         self.defaultLanguages = ["English"]
         self.language = self.defaultLanguages[0]
         self.input = ["mouse"]
-        self.viewMode = [ "googles","mirror"]
+        self.viewModes = [ "googles","mirror"]
+        self.viewMode = self.viewModes[0]
         self.rateVivid = True
         self.sessionChoices = [1, 2]
         self.session = self.sessionChoices[0]
@@ -296,7 +297,7 @@ class BRT_settings():
         self.calibrationBR = True
         self.switchRateTest = False
         self.nextSubjectCalc = False
-        self.doDlg = True # used during testing
+        self.doDlg = False # used during testing
 
 
 
