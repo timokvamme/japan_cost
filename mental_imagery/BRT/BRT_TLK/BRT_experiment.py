@@ -264,7 +264,7 @@ class BRT_experiment(BRT_settings):
                                                        granularity=0, readOnly=False, labelColor=self.foregroundColor,
                                                        markerColor=self.scaleMarkerColor,
                                                        lineColor=self.foregroundColor, colorSpace='rgb', opacity=None,
-                                                       font='Helvetica Bold',
+                                                       font=self.font,
                                                        depth=0, name=None, labelHeight=None, labelWrapWidth=2000,
                                                        autoDraw=False,
                                                        autoLog=True, color=False, fillColor=False, borderColor=False)
@@ -279,7 +279,7 @@ class BRT_experiment(BRT_settings):
                                                         labelColor=self.foregroundColor,
                                                         markerColor=self.scaleMarkerColor,
                                                         lineColor=self.foregroundColor, colorSpace='rgb',
-                                                        opacity=None, font='Helvetica Bold',
+                                                        opacity=None, font=self.font,
                                                         depth=0, name=None, labelHeight=None, labelWrapWidth=2000,
                                                         autoDraw=False,
                                                         autoLog=True, color=False, fillColor=False,
@@ -294,7 +294,7 @@ class BRT_experiment(BRT_settings):
                                                         labelColor=self.foregroundColor,
                                                         markerColor=self.scaleMarkerColor,
                                                         lineColor=self.foregroundColor, colorSpace='rgb',
-                                                        opacity=None, font='Helvetica Bold',
+                                                        opacity=None, font=self.font,
                                                         depth=0, name=None, labelHeight=None, labelWrapWidth=2000,
                                                         autoDraw=False,
                                                         autoLog=True, color=False, fillColor=False,
@@ -981,7 +981,18 @@ class BRT_experiment(BRT_settings):
 
 
         self.instructionText.setText(self.horizontalAdjustText)
-        self.instructionText.pos = self.posAbove
+        self.instructionText.pos = self.posFarAbove
+
+        instructText1 = self.instructionAnsText0
+        instructText1.setText("text")
+        instructText1.setPos((self.leftPosCalc[0],self.posAbove[1]))
+        instructText2 = self.instructionAnsText1
+        instructText2.setText("text")
+        instructText2.setPos((self.rightPosCalc[0],self.posAbove[1]))
+        self.gabor_blue.pos = self.leftPosCalc
+        self.gabor_red.pos = self.rightPosCalc
+
+
 
         self.win.setMouseVisible(False)
         adjusted = False
@@ -991,6 +1002,8 @@ class BRT_experiment(BRT_settings):
 
             self.gabor_blue.draw()
             self.gabor_red.draw()
+            instructText1.draw()
+            instructText2.draw()
             self.instructionText.draw()
 
 
@@ -1003,11 +1016,14 @@ class BRT_experiment(BRT_settings):
                 if response[0] == "left":
                     self.gabor_blue.pos = (self.gabor_blue.pos[0] - self.horizontalStepRate,self.leftPosCalc[1])
                     self.gabor_red.pos = (self.gabor_red.pos[0] + self.horizontalStepRate,self.rightPosCalc[1])
-
+                    instructText1.pos = (self.gabor_blue.pos[0] - self.horizontalStepRate,self.posAbove[1])
+                    instructText2.pos = (self.gabor_red.pos[0] + self.horizontalStepRate,self.posAbove[1])
 
                 elif response[0] == "right":
                     self.gabor_blue.pos = (self.gabor_blue.pos[0] + self.horizontalStepRate,self.leftPosCalc[1])
                     self.gabor_red.pos = (self.gabor_red.pos[0] - self.horizontalStepRate,self.rightPosCalc[1])
+                    instructText1.pos = (self.gabor_blue.pos[0] + self.horizontalStepRate,self.posAbove[1])
+                    instructText2.pos = (self.gabor_red.pos[0] - self.horizontalStepRate,self.posAbove[1])
 
                 elif response[0] == "up":
                     self.horizontalStepRate = self.horizontalStepRate + self.horizontalStepRateChange
@@ -1042,6 +1058,9 @@ class BRT_experiment(BRT_settings):
         BRadjustment_csv_path = self.subjectSaveFolder + '\\' + 'subject_' + str(str(self.subjectID)) + "_calibrationBR" + '.csv'
         calibrationBRdf.to_csv(BRadjustment_csv_path)
 
+
+        instructText1.setText(self.ansText0)
+        instructText2.setText(self.ansText1)
 
     def run_adaptation_calibrationBR(self):
         """
@@ -1170,6 +1189,12 @@ class BRT_experiment(BRT_settings):
                     # the adaptation effect worked
                     self.calibrationSCHistory.append("switch")
 
+
+                bo = round(self.gabor_blue.opacity,2)
+                ro = round(self.gabor_red.opacity,2)
+                print("blue: %s" % bo)
+                print("red: %s" % ro)
+
                 trial["contrast2_blue"] = self.gabor_blue_opacity
                 trial["contrast2_red"] = self.gabor_red_opacity
 
@@ -1185,6 +1210,11 @@ class BRT_experiment(BRT_settings):
             else: # continue
                 stim = self.make_stimulus(trialList[no + 1])
                 no += 1
+
+            bo = round(self.gabor_blue.opacity, 2)
+            ro = round(self.gabor_red.opacity, 2)
+            print("blue: %s" % bo)
+            print("red: %s" % ro)
 
 
 
@@ -1250,17 +1280,23 @@ class BRT_experiment(BRT_settings):
         instructText.setText(self.calibrationHFPIText)
         instructText.setPos(self.posAbove)
 
+        self.gabor_blue.pos = self.leftPosCalc
+        self.gabor_red.pos = self.rightPosCalc
+        self.grl.pos = self.leftPosCalc
+        self.gbr.pos = self.rightPosCalc
+
 
         while calibrationComplete == False:
             self.gabor_red.draw()
             self.grl.draw()
             instructText.draw()
             self.win.flip()
+            if self.hz > 60: core.wait(0.008)
             self.gabor_blue.draw()
             self.gbr.draw()
             instructText.draw()
             self.win.flip()
-
+            if self.hz > 60: core.wait(0.008)
 
             resp = psychopy.event.getKeys(keyList=self.calibrate_hfpi_keys + self.scaleAcceptKeys + self.quitKeys)
 
@@ -1361,8 +1397,8 @@ class BRT_experiment(BRT_settings):
         instructionText2 = self.instructionText2
         instructionText2.setText(self.switchRateInstructText)
 
-        instructionText.setPos(self.posAboveLeft)
-        instructionText2.setPos(self.posAboveRight)
+        instructionText.setPos((self.leftPosCalc[0],self.posAbove[1]))
+        instructionText2.setPos((self.rightPosCalc[0],self.posAbove[1]))
 
 
         win.setMouseVisible(False)
@@ -1517,40 +1553,25 @@ class BRT_experiment(BRT_settings):
 def run_experiment():
     BRT = BRT_experiment()
 
-
-    #
-    # if BRT.intro:
-    #     BRT.BRT_img_introduction()
-
     if BRT.doBRHorizontalAdjust:
         BRT.run_BRHorizontalAdjust()
 
     if BRT.calibrationBR:
         BRT.run_hfpi_calibrationBR()
 
+    # if BRT.calibrationBR:
+    #     BRT.run_adaptation_calibrationBR()
+
     if BRT.switchRateTest:
         BRT.run_BRT_switch_rate(phase="BRT_switchrate")
 
-
-    # if BRT.instruct:
-    #     BRT.run_BRT_img(phase="BRT_img_instruct")
     if BRT.intro:
         BRT.run_BRT_img_introduction()
 
     BRT.run_BRT_img(phase="BRT_img_trials")
 
-
-
 # ----------------- Actual Run Experiment ------------------------#
 if __name__ == "__main__":
     run_experiment()
-
     print("Done - running core.quit()")
     core.quit()
-
-
-
-
-
-
-

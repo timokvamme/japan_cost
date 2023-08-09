@@ -38,7 +38,7 @@ class BRT_settings():
         dash_print('creating %s' % inspect.stack()[0][3])
 
         self.displayResolution = [1920,1080]
-        self.displayResolution = [1920,800]
+        #self.displayResolution = [1920,800]
         self.centerScreen=self.displayResolution[0] / 2, self.displayResolution[1] / 2
         self.displayResolutionCalibration = 500, 500
         self.fullscreen = False
@@ -105,6 +105,7 @@ class BRT_settings():
         self.textHeight = 0.7
         self.textHeightSmall = 0.7
         self.font = 'MS Gothic'
+        self.font = "Courier"
         self.opacityCircle = 1
         self.fixCircleradius= 0.1 / self.degPerPx
         self.imgCircleradius = 0.2 / self.degPerPx
@@ -145,7 +146,7 @@ class BRT_settings():
 
         deg_per_px = self.degPerPx
 
-        self.leftPos = (-6.0  , 0.0 ) # set in helper functions aswell
+        self.leftPos = (-6.0  , 0.0) # set in helper functions aswell
         self.lP = self.leftPos
         self.rightPos = (6.0 , 0.0)
         self.rP = self.rightPos
@@ -160,10 +161,9 @@ class BRT_settings():
         self.mouseIndicatorPos = self.posCenter
         self.keyboardIndicatorPos = (8.0 , -7.0)
 
-
+        self.shift_right = -2
         self.posCloseAbove = (0.0,1.0)
         self.posCloseBelow = (0.0, -1.0)
-
         self.posAbove = (0, 3.5)
         self.posFarAbove = (0, 6.0)
         self.posFarFarAbove = (0, 9.0)
@@ -174,12 +174,13 @@ class BRT_settings():
         self.posFarAboveRight = (7.0, 7.0)
         self.posFarFarAboveLeft = (-9.0, 9.0 )
         self.posFarFarAboveRight = (9.0, 9.0)
-
         self.posAboveLeft = (self.leftPos[0], self.posAbove[1])
         self.posAboveRight = (self.rightPos[0], self.posAbove[1])
         self.posBelowLeft = (self.leftPos[0], self.posBelow[1])
         self.posBelowRight = (self.rightPos[0], self.posBelow[1])
         self.posFarFarBelow = (0, -9)
+
+
         self.textPosFarFarBelow = (0, -9. )
         self.MouseOutOfScreenPos = 1920, 540 # right  middle  (traditional cords, non psychoipy)
         self.mouseAboveCenterScreenPos = 960, 430 # basicly set it in the middle of the screen (used for cuereact)
@@ -252,7 +253,7 @@ class BRT_settings():
         dash_print('creating %s' % inspect.stack()[0][3])
 
 
-
+        self.hz = 100
         # in seconds  #Inter Stimulus Interval
         self.iti = 0.250 # time after response until the trial starts
         self.cueTime = 0.750
@@ -284,7 +285,7 @@ class BRT_settings():
         self.defaultLanguages = ["English"]
         self.language = self.defaultLanguages[0]
         self.input = ["mouse"]
-        self.viewMode = ["mirror", "googles"]
+        self.viewMode = [ "googles","mirror"]
         self.rateVivid = True
         self.sessionChoices = [1, 2]
         self.session = self.sessionChoices[0]
@@ -295,7 +296,7 @@ class BRT_settings():
         self.calibrationBR = True
         self.switchRateTest = True
         self.nextSubjectCalc = False
-        self.doDlg = False # used during testing
+        self.doDlg = True # used during testing
 
 
 
@@ -333,14 +334,16 @@ class BRT_settings():
                 print("could not find calibration file for subject %s in %s" % (self.subjectID,self.subjectSaveFolder) )
                 self.calibrationBR = True
 
-        if self.doBRHorizontalAdjust == False:
-            try:
-                df = pd.read_csv(self.subjectSaveFolder + '\\' + 'subject_' + str(str(self.subjectID)) + "_calibrationBR" + '.csv')
-                self.leftPosCalc = df["gabor_blue_pos"][len(df) - 1]
-                self.rightPosCalc  = df["gabor_red_pos"][len(df) - 1]
-            except:
-                print("could not find horizontal calibration file for subject %s in %s" % (self.subjectID,self.subjectSaveFolder) )
-                self.doBRHorizontalAdjust = True
+        try:
+            df = pd.read_csv(
+                self.subjectSaveFolder + '\\' + 'subject_' + str(str(self.subjectID)) + "_calibrationBR" + '.csv')
+            self.leftPosCalc = (df["gabor_blue_pos"][len(df) - 1],self.lP[1])
+            self.rightPosCalc = (df["gabor_red_pos"][len(df) - 1],self.rP[1])
+        except:
+            print("could not find horizontal calibration file for subject %s in %s" % (
+            self.subjectID, self.subjectSaveFolder))
+            self.doBRHorizontalAdjust = True
+
 
         if self.viewMode == "googles":
             self.imgCircleradius = 0.2 / self.degPerPx
