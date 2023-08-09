@@ -258,8 +258,8 @@ class BRT_experiment(BRT_settings):
                         opacity=0.7)
 
         self.ratingScaleVivid = psychopy.visual.Slider(self.win, ticks=range(-150, 150), labels=["low", "high"],
-                                                       startValue=None, pos=self.leftPos,
-                                                       size=(15, 1), units=None, flip=False, ori=90, style='slider',
+                                                       startValue=None, pos=self.posCenter,
+                                                       size=(8, 1), units=None, flip=False, ori=90, style='slider',
                                                        styleTweaks=[],
                                                        granularity=0, readOnly=False, labelColor=self.foregroundColor,
                                                        markerColor=self.scaleMarkerColor,
@@ -335,7 +335,7 @@ class BRT_experiment(BRT_settings):
                                                height=self.textHeight, text=self.imageryInstructText, wrapWidth=self.wrapWidth)
 
         self.imgCircle = psychopy.visual.Circle(self.win, fillColor=self.backgroundColor,lineColor=self.foregroundColor,radius=self.imgCircleradius,
-                                                pos=self.posBelow, opacity=self.opacityCircle)
+                                                pos=self.posCenter, opacity=self.opacityCircle)
 
 
         self.instructionTextLeft = visual.TextStim(self.win, color=self.foregroundColor, pos=self.posFarFarAboveLeft,
@@ -642,12 +642,19 @@ class BRT_experiment(BRT_settings):
 
 
         elif trial["type"] == "mock":
-            print("x")
-
+            if trial["no"] % 2 == 0:
+                self.gabor_blue.pos = self.leftPosCalc
+                self.gabor_blue.draw()
+                self.gabor_blue.pos = self.rightPosCalc
+                self.gabor_blue.draw()
+            else:
+                self.gabor_red.pos = self.leftPosCalc
+                self.gabor_red.draw()
+                self.gabor_red.pos = self.rightPosCalc
+                self.gabor_red.draw()
 
         else:
             print("incorrect type of trial in make_stimulus")
-
 
 
         return self.stim
@@ -678,7 +685,7 @@ class BRT_experiment(BRT_settings):
 
 
             self.win.clearBuffer()
-            self.stimTextPrime.setPos(self.posCenter)
+            self.stimTextPrime.setPos(self.posFarAbove)
             self.stimTextPrime.draw()
             self.prime = visual.BufferImageStim(self.win)
             self.win.clearBuffer()
@@ -696,13 +703,13 @@ class BRT_experiment(BRT_settings):
         return self.prime
 
     def make_imagery_circle(self,trial):
+
+
         self.stimTextPrime.text = trial["prime"]
         if self.viewMode == "googles":
 
-
             self.imgCircle.draw()
             self.stimTextPrime.draw()
-            self.win.clearBuffer()
             self.imageryInstruct = visual.BufferImageStim(self.win)
             self.win.clearBuffer()
 
@@ -739,12 +746,11 @@ class BRT_experiment(BRT_settings):
             ratingScaleVivid = self.ratingScaleVivid
             ratingScaleVivid.reset()
             self.win.setMouseVisible(True)
+            self.mouse.setPos(self.posCenter)
+
+            self.instructionAbove.setPos(self.posFarAbove)
             self.instructionAbove.setText(self.vividnessJudgementText)
             while ratingScaleVivid.rating == None:
-                keyPressed = self.kb.getKeys(keyList=self.rateVividKeys)
-                if keyPressed:
-                    ratingScaleVivid.setMarkerPos(ratingScaleVivid.getMarkerPos() - 1 if keyPressed == [
-                        'left'] else ratingScaleVivid.getMarkerPos() + 1)
                 ratingScaleVivid.draw()
                 self.instructionAbove.draw()
                 self.win.flip()
@@ -938,7 +944,7 @@ class BRT_experiment(BRT_settings):
 
     def run_BRT_img_introduction(self):
 
-        if self.viewMode == "googles:":
+        if self.viewMode == "googles":
             self.instructionText.setText(self.introText)
             self.instructionText.pos = self.posAbove
             self.instructionTextFarFarBelow.setText(self.pressToContinue)
@@ -1272,75 +1278,134 @@ class BRT_experiment(BRT_settings):
         #         instructText.text = "red: %s blue %s" % (ro,bo)
         #
 
+        if self.viewMode == "mirrors":
+            self.win.setMouseVisible(False)
+            calibrationComplete = False
 
-        self.win.setMouseVisible(False)
-        calibrationComplete = False
+            instructText = self.instructionText
+            instructText.setText(self.calibrationHFPIText)
+            instructText.setPos(self.posAbove)
 
-        instructText = self.instructionText
-        instructText.setText(self.calibrationHFPIText)
-        instructText.setPos(self.posAbove)
-
-        self.gabor_blue.pos = self.leftPosCalc
-        self.gabor_red.pos = self.rightPosCalc
-        self.grl.pos = self.leftPosCalc
-        self.gbr.pos = self.rightPosCalc
-
-
-        while calibrationComplete == False:
-            self.gabor_red.draw()
-            self.grl.draw()
-            instructText.draw()
-            self.win.flip()
-            if self.hz > 60: core.wait(0.008)
-            self.gabor_blue.draw()
-            self.gbr.draw()
-            instructText.draw()
-            self.win.flip()
-            if self.hz > 60: core.wait(0.008)
-
-            resp = psychopy.event.getKeys(keyList=self.calibrate_hfpi_keys + self.scaleAcceptKeys + self.quitKeys)
-
-            if len(resp):
-                if resp[0] in self.quitKeys:
-                    psychopy.core.quit()
-                elif resp[0] == self.calibrate_hfpi_keys[0]:
-                    self.gabor_blue.opacity -= self.calibrationStepSmall
-                    self.gbr.opacity -= self.calibrationStepSmall
-                    self.gabor_red.opacity += self.calibrationStepSmall
-                    self.grl.opacity += self.calibrationStepSmall
-
-                elif resp[0] == self.calibrate_hfpi_keys[1]:
-                    self.gabor_blue.opacity += self.calibrationStepSmall
-                    self.gbr.opacity += self.calibrationStepSmall
-                    self.gabor_red.opacity -= self.calibrationStepSmall
-                    self.grl.opacity -= self.calibrationStepSmall
-
-                elif resp[0] in self.scaleAcceptKeys:
-
-                    calibrationComplete = True
-                    bo = self.gabor_blue.opacity
-                    ro = self.gabor_red.opacity
-
-                    if bo > ro:diff = 1.0 - bo
-                    else:diff = 1.0 - ro
-
-                    self.gabor_blue.opacity += diff
-                    self.gabor_red.opacity += diff
-
-                    self.gabor_blue_opacity = self.gabor_blue.opacity
-                    self.gabor_red_opacity = self.gabor_red.opacity
+            self.gabor_blue.pos = self.leftPosCalc
+            self.gabor_red.pos = self.rightPosCalc
+            self.grl.pos = self.leftPosCalc
+            self.gbr.pos = self.rightPosCalc
 
 
+            while calibrationComplete == False:
+                self.gabor_red.draw()
+                self.grl.draw()
+                instructText.draw()
+                self.win.flip()
+                if self.hz > 60: core.wait(0.008)
+                self.gabor_blue.draw()
+                self.gbr.draw()
+                instructText.draw()
+                self.win.flip()
+                if self.hz > 60: core.wait(0.008)
 
-                bo = round(self.gabor_blue.opacity,2)
-                ro = round(self.gabor_red.opacity,2)
-                print("blue: %s" % bo)
-                print("red: %s" % ro)
+                resp = psychopy.event.getKeys(keyList=self.calibrate_hfpi_keys + self.scaleAcceptKeys + self.quitKeys)
 
-                instructText.text = "red: %s blue %s" % (ro,bo)
+                if len(resp):
+                    if resp[0] in self.quitKeys:
+                        psychopy.core.quit()
+                    elif resp[0] == self.calibrate_hfpi_keys[0]:
+                        self.gabor_blue.opacity -= self.calibrationStepSmall
+                        self.gbr.opacity -= self.calibrationStepSmall
+                        self.gabor_red.opacity += self.calibrationStepSmall
+                        self.grl.opacity += self.calibrationStepSmall
+
+                    elif resp[0] == self.calibrate_hfpi_keys[1]:
+                        self.gabor_blue.opacity += self.calibrationStepSmall
+                        self.gbr.opacity += self.calibrationStepSmall
+                        self.gabor_red.opacity -= self.calibrationStepSmall
+                        self.grl.opacity -= self.calibrationStepSmall
+
+                    elif resp[0] in self.scaleAcceptKeys:
+
+                        calibrationComplete = True
+                        bo = self.gabor_blue.opacity
+                        ro = self.gabor_red.opacity
+
+                        if bo > ro:diff = 1.0 - bo
+                        else:diff = 1.0 - ro
+
+                        self.gabor_blue.opacity += diff
+                        self.gabor_red.opacity += diff
+
+                        self.gabor_blue_opacity = self.gabor_blue.opacity
+                        self.gabor_red_opacity = self.gabor_red.opacity
 
 
 
+                    bo = round(self.gabor_blue.opacity,2)
+                    ro = round(self.gabor_red.opacity,2)
+                    print("blue: %s" % bo)
+                    print("red: %s" % ro)
+
+                    instructText.text = "red: %s blue %s" % (ro,bo)
+        else:
+            psychopy.event.clearEvents()
+            self.win.setMouseVisible(False)
+            calibrationComplete = False
+
+            instructText = self.instructionText
+            instructText.setText(self.calibrationHFPIText)
+            instructText.setPos(self.posAbove)
+
+            self.gabor_blue.pos = self.posCenter
+            self.gabor_red.pos = self.posCenter
+
+
+            while calibrationComplete == False:
+                self.gabor_red.draw()
+                instructText.draw()
+                self.win.flip()
+                if self.hz > 60: core.wait(0.008)
+                self.gabor_blue.draw()
+                instructText.draw()
+                self.win.flip()
+                if self.hz > 60: core.wait(0.008)
+
+                resp = psychopy.event.getKeys(keyList=self.calibrate_hfpi_keys + self.scaleAcceptKeys + self.quitKeys)
+
+                if len(resp):
+                    if resp[0] in self.quitKeys:
+                        psychopy.core.quit()
+                    elif resp[0] == self.calibrate_hfpi_keys[0]:
+                        self.gabor_blue.opacity -= self.calibrationStepSmall
+                        self.gabor_red.opacity += self.calibrationStepSmall
+
+
+                    elif resp[0] == self.calibrate_hfpi_keys[1]:
+                        self.gabor_blue.opacity += self.calibrationStepSmall
+
+                        self.gabor_red.opacity -= self.calibrationStepSmall
+
+
+                    elif resp[0] in self.scaleAcceptKeys:
+
+                        calibrationComplete = True
+                        bo = self.gabor_blue.opacity
+                        ro = self.gabor_red.opacity
+
+                        if bo > ro:
+                            diff = 1.0 - bo
+                        else:
+                            diff = 1.0 - ro
+
+                        self.gabor_blue.opacity += diff
+                        self.gabor_red.opacity += diff
+
+                        self.gabor_blue_opacity = self.gabor_blue.opacity
+                        self.gabor_red_opacity = self.gabor_red.opacity
+
+                    bo = round(self.gabor_blue.opacity, 2)
+                    ro = round(self.gabor_red.opacity, 2)
+                    print("blue: %s" % bo)
+                    print("red: %s" % ro)
+
+                    instructText.text = "red: %s blue %s" % (ro, bo)
 
     def draw_text_instruct(self, text="text to present"):
 
@@ -1519,8 +1584,6 @@ class BRT_experiment(BRT_settings):
 
             # vividness questionaire
             if self.rateVivid:
-
-
                 win.setMouseVisible(True)
                 rating, rt = self.get_rate_vivid()
 
@@ -1553,22 +1616,36 @@ class BRT_experiment(BRT_settings):
 def run_experiment():
     BRT = BRT_experiment()
 
-    if BRT.doBRHorizontalAdjust:
-        BRT.run_BRHorizontalAdjust()
+    if BRT.viewMode == "mirrors":
 
-    if BRT.calibrationBR:
-        BRT.run_hfpi_calibrationBR()
+        if BRT.doBRHorizontalAdjust and BRT.viewMode == "mirrors":
+            BRT.run_BRHorizontalAdjust()
 
-    # if BRT.calibrationBR:
-    #     BRT.run_adaptation_calibrationBR()
+        if BRT.calibrationBR:
+            BRT.run_hfpi_calibrationBR()
 
-    if BRT.switchRateTest:
-        BRT.run_BRT_switch_rate(phase="BRT_switchrate")
+        # if BRT.calibrationBR:
+        #     BRT.run_adaptation_calibrationBR()
 
-    if BRT.intro:
-        BRT.run_BRT_img_introduction()
+        if BRT.switchRateTest and BRT.viewMode == "mirrors":
+            BRT.run_BRT_switch_rate(phase="BRT_switchrate")
 
-    BRT.run_BRT_img(phase="BRT_img_trials")
+        if BRT.intro:
+            BRT.run_BRT_img_introduction()
+
+        BRT.run_BRT_img(phase="BRT_img_trials")
+
+    else:
+        if BRT.intro:
+            BRT.run_BRT_img_introduction()
+
+        if BRT.calibrationBR:
+            BRT.run_hfpi_calibrationBR()
+
+
+
+        BRT.run_BRT_img(phase="BRT_img_trials")
+
 
 # ----------------- Actual Run Experiment ------------------------#
 if __name__ == "__main__":

@@ -39,7 +39,7 @@ class BRT_settings():
 
         self.displayResolution = [1920,1080]
         #self.displayResolution = [1920,800]
-        self.centerScreen=self.displayResolution[0] / 2, self.displayResolution[1] / 2
+        self.centerScreen =self.displayResolution[0] / 2, self.displayResolution[1] / 2
         self.displayResolutionCalibration = 500, 500
         self.fullscreen = False
         self.monWidth = 38.5
@@ -294,7 +294,7 @@ class BRT_settings():
         self.eyeDomChoices = ["left","right"]
         self.doBRHorizontalAdjust = True
         self.calibrationBR = True
-        self.switchRateTest = True
+        self.switchRateTest = False
         self.nextSubjectCalc = False
         self.doDlg = True # used during testing
 
@@ -346,7 +346,9 @@ class BRT_settings():
 
 
         if self.viewMode == "googles":
-            self.imgCircleradius = 0.2 / self.degPerPx
+            self.imgCircleradius = 0.1 / self.degPerPx
+            self.leftPosCalc = self.posCenter
+            self.rightPosCalc = self.posCenter
         else:
             self.imgCircleradius = 0.1 / self.degPerPx
 
@@ -360,7 +362,7 @@ class BRT_settings():
 
         # its prolly just plain ol english
 
-        self.introText = "In this task you will see some red and blue grating stimuli\npress space to continue" if self.viewMode == "googles" else  "In this\n" \
+        self.introText = "In this task you will see some red and blue grating stimuli\n\nplease put on the blue/red googles\n\npress space to continue" if self.viewMode == "googles" else  "In this\n" \
                                                                                                       "task you\n" \
                                                                                                       "will see\n" \
                                                                                                       "some red\n" \
