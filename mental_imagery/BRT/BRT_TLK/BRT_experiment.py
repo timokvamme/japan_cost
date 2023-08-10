@@ -48,7 +48,7 @@ class BRT_experiment(BRT_settings):
     def __init__(self):
         print('running %s' % __class__.__name__)
         self.experiment = "BRT"
-        self.experiment_version = "0.9"
+        self.experiment_version = "1.1"
         self.display_settings()
         self.directory_settings()
         self.stimuli_settings()
