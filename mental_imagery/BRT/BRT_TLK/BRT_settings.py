@@ -334,6 +334,8 @@ class BRT_settings():
             except:
                 print("could not find calibration file for subject %s in %s" % (self.subjectID,self.subjectSaveFolder) )
                 self.calibrationBR = True
+                self.gabor_blue_opacity = 1.0
+                self.gabor_red_opacity = 1.0
 
         try:
             df = pd.read_csv(

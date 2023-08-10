@@ -690,31 +690,15 @@ class BRT_experiment(BRT_settings):
                 self.win.clearBuffer()
 
             elif trial["type"] == "adaptation":
-                # location
-                if trial["loc"] == "BR":
-                    self.gabor_blue.pos = self.leftPosCalc
-                    self.gabor_red.pos = self.rightPosCalc
-                elif trial["loc"] == "RB":
-                    self.gabor_blue.pos = self.rightPosCalc
-                    self.gabor_red.pos = self.leftPosCalc
-                else:
-                    print("inccorect loc set in make_stimulus")
-
-                # contrast / opacity
-                self.gabor_blue.opacity = self.full_gabor_opacity
-                self.gabor_red.opacity = self.full_gabor_opacity
 
                 self.win.clearBuffer()
                 if trial["domAns"] == "red":
-                    self.gabor_red.pos = self.leftPosCalc
-                    self.gabor_red.draw()
-                    self.gabor_red.pos = self.rightPosCalc
+
+                    self.gabor_red.pos = self.posCenter
                     self.gabor_red.draw()
 
                 if trial["domAns"] == "blue":
-                    self.gabor_blue.pos = self.leftPosCalc
-                    self.gabor_blue.draw()
-                    self.gabor_blue.pos = self.rightPosCalc
+                    self.gabor_blue.pos = self.posCenter
                     self.gabor_blue.draw()
 
                 self.stim = visual.BufferImageStim(self.win)
@@ -723,19 +707,15 @@ class BRT_experiment(BRT_settings):
 
             elif trial["type"] == "mock":
                 if trial["no"] % 2 == 0:
-                    self.gabor_blue.opacity = self.full_gabor_opacity
-
-                    self.gabor_blue.pos = self.leftPosCalc
-                    self.gabor_blue.draw()
-                    self.gabor_blue.pos = self.rightPosCalc
-                    self.gabor_blue.draw()
+                    self.gabor_red.pos = self.posCenter
+                    self.gabor_red.draw()
 
                 else:
-                    self.gabor_red.opacity = self.full_gabor_opacity
-                    self.gabor_red.pos = self.leftPosCalc
-                    self.gabor_red.draw()
-                    self.gabor_red.pos = self.rightPosCalc
-                    self.gabor_red.draw()
+                    self.gabor_blue.pos = self.posCenter
+                    self.gabor_blue.draw()
+
+                self.stim = visual.BufferImageStim(self.win)
+                self.win.clearBuffer()
 
             else:
                 print("incorrect type of trial in make_stimulus")
@@ -1313,6 +1293,151 @@ class BRT_experiment(BRT_settings):
 
             else: # continue
                 stim = self.make_stimulus(trialList[no + 1])
+                no += 1
+
+            bo = round(self.gabor_blue.opacity, 2)
+            ro = round(self.gabor_red.opacity, 2)
+            print("blue: %s" % bo)
+            print("red: %s" % ro)
+
+
+    def run_adaptation_calibration_merlinBR(self):
+        """
+        same adaptive staricase, but with the contrast images from the stimuli folder
+
+
+        :return:
+        """
+
+
+        self.calibrationSCHistory = []
+        self.calibrationPerceptHistory = []
+        self.calibrationPerceptValues = [0.0,0.5,1.0]
+        self.calibrationStep = 0.10
+
+
+        trialList = self.make_trial_list(phase="BRT_calibration")
+        trial = trialList[0]
+        saveFile = trialList[0]["filePath"]
+
+        file = open(saveFile, "w")
+        print('Writing to record_file {0}'.format(saveFile))
+        csvWriter = csv.writer(file, delimiter=',', lineterminator="\n")
+        csvWriter.writerow(trialList[0].keys())
+
+        stim = self.make_stimulus(trial)
+
+
+        calibrationComplete = False
+        no = 0
+        while calibrationComplete == False:
+
+            # Initial fixation cross ( right after ppt has responed)
+            waitTill = self.myClock.getTime() + trial["iti"]
+            while self.myClock.getTime() < waitTill:
+                self.stimFix.draw()
+                self.win.flip()
+
+
+            # Binocular Rivalry - stimulus
+            self.win.setMouseVisible(False)
+            waitTill = self.myClock.getTime() + self.stimTime
+            while waitTill > self.myClock.getTime():
+                stim.draw()
+                self.win.flip()
+
+            # Response Dominance Percept
+            ansInt = self.get_dominance_percept()
+            if ansInt == "c": self.run_BRHorizontalAdjust()
+            if ansInt == "f": calibrationComplete = True
+            try:trial["domAns"] = self.ansTypesName[ansInt]
+            except:pass
+            trial["no"] = no
+            trial["contrast_blue"] = self.gabor_blue_opacity
+            trial["contrast_red"] = self.gabor_red_opacity
+            if self.removeMixTrialsCalibrationResult and trial["domAns"] == "mix":pass
+            else:
+                try:
+                    self.calibrationPerceptHistory.append(self.calibrationPerceptValues[ansInt])
+                except:pass
+
+            if trial["domAns"] != "mix":
+
+                trial["type"] = "adaptation"
+                stim = self.make_stimulus(trial)
+
+                # adaptation effect induction
+                self.win.setMouseVisible(False)
+
+                waitTill = self.myClock.getTime() + self.domPerceptAdaptTimePresent
+                while waitTill > self.myClock.getTime():
+                    stim.draw()
+                    self.win.flip()
+
+                # ITI
+                waitTill = self.myClock.getTime() + trial["iti"]
+                while self.myClock.getTime() < waitTill:
+                    self.stimFix.draw()
+                    self.win.flip()
+
+                trial["type"] = "img"
+                stim = self.make_stimulus(trial)
+
+                # Binocular Rivalry - stimulus 2
+                self.win.setMouseVisible(False)
+                waitTill = self.myClock.getTime() + self.stimTime
+                while waitTill > self.myClock.getTime():
+                    stim.draw()
+                    self.win.flip()
+
+                # Response Dominance Percept 2
+                ansInt = self.get_dominance_percept()
+                if ansInt == "c":self.run_BRHorizontalAdjust()
+                if ansInt == "f":calibrationComplete = True
+                try:  trial["domAns2"] = self.ansTypesName[ansInt]
+                except:pass
+
+                # if the ppt sees the same percept, or a mix of the two, then decrease the contrast for that percept
+                if trial["domAns"] == "blue" and (trial["domAns2"] == "blue" or trial["domAns2"] == "mix"):
+                    self.gabor_blue_opacity = self.gabor_blue_opacity  - self.calibrationStep
+                    self.gabor_red_opacity = self.gabor_red_opacity + self.calibrationStep
+                    if self.gabor_red_opacity > 1.0: self.gabor_red_opacity = 1.0
+                    self.calibrationSCHistory.append("dom_persist")
+                    bo, ro = self.find_best_contrast_img(self.gabor_blue_opacity, self.gabor_red_opacity)
+                    trial["img"] = pathjoin(self.stimuliFolder, paste("gabor_r", ro, "_", "b", bo, ".png", sep=""))
+
+                elif trial["domAns"] == "red" and (trial["domAns2"] == "red" or trial["domAns2"] == "mix"):
+                    self.gabor_blue_opacity = self.gabor_blue_opacity  + self.calibrationStep
+                    self.gabor_red_opacity = self.gabor_red_opacity - self.calibrationStep
+                    if self.gabor_blue_opacity > 1.0: self.gabor_blue_opacity = 1.0
+                    self.calibrationSCHistory.append("dom_persist")
+                    bo, ro = self.find_best_contrast_img(self.gabor_blue_opacity, self.gabor_red_opacity)
+                    trial["img"] = pathjoin(self.stimuliFolder, paste("gabor_r", ro, "_", "b", bo, ".png", sep=""))
+
+                else:
+                    # the adaptation effect worked
+                    self.calibrationSCHistory.append("switch")
+
+
+                bo = round(self.gabor_blue.opacity,2)
+                ro = round(self.gabor_red.opacity,2)
+                print("blue: %s" % bo)
+                print("red: %s" % ro)
+
+                trial["contrast2_blue"] = self.gabor_blue_opacity
+                trial["contrast2_red"] = self.gabor_red_opacity
+
+            csvWriter.writerow(trial.values());file.flush()
+            #switch_history = self.calibrationSCHistory[-self.switchHistoryWindow:]
+            switch_history = self.calibrationSCHistory
+
+            percept_history = self.calibrationPerceptHistory[-self.switchHistoryWindow:]
+            if len(switch_history) > self.numTrialsMinCalibrationBR -1 and switch_history.count("switch") >= self.minSwitches:
+                calibrationComplete = True
+
+
+            else: # continue
+                stim = self.make_stimulus(trial)
                 no += 1
 
             bo = round(self.gabor_blue.opacity, 2)
