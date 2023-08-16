@@ -105,7 +105,7 @@ class BRT_settings():
         self.textHeight = 0.7
         self.textHeightSmall = 0.7
         self.font = 'MS Gothic'
-        self.font = "Courier"
+        #self.font = "Arial"
         self.opacityCircle = 1
         self.fixCircleradius= 0.1 / self.degPerPx
         self.imgCircleradius = 0.2 / self.degPerPx
@@ -296,8 +296,8 @@ class BRT_settings():
         self.doBRHorizontalAdjust = True
         self.calibrationBR = True
         self.switchRateTest = False
-        self.nextSubjectCalc = False
-        self.doDlg = False # used during testing
+        self.nextSubjectCalc = True
+        self.doDlg = True # used during testing
 
 
 
@@ -365,15 +365,12 @@ class BRT_settings():
 
         # its prolly just plain ol english
 
-        self.introText = "In this task you will see some red and blue grating stimuli\n\nplease put on the blue/red googles\n\npress space to continue" if self.viewMode == "googles" else  "In this\n" \
+        self.introText = "In this task you will see some red and blue grating stimuli\n\nplease put on the blue/red googles\n\n" if self.viewMode == "googles" else  "In this\n" \
                                                                                                       "task you\n" \
                                                                                                       "will see\n" \
                                                                                                       "some red\n" \
                                                                                                               "and blue\n" \
-                                                                                                              "grating stimuli\n\n" \
-                                                                                                                                                    "" \
-                                                                                                                                                    "press space\n" \
-                                                                                                                                                    "to continue" \
+                                                                                                              "grating stimuli\n\n"
 
 
         self.calibrationTextIntro = "rate whether you saw a red, blue or mixed stimulus" if self.viewMode == "googles" else "rate\n" \
@@ -467,9 +464,9 @@ class BRT_settings():
         dash_print('creating %s' % inspect.stack()[0][3])
 
         self.numTrialsBRT_img = 100
-        self.numTrialsMinCalibrationBR = 10
+        self.numTrialsMinCalibrationBR = 6
         self.numTrialsMaxCalibrationBR = 20
-        self.minSwitches = 8 #
+        self.minSwitches = 3 #
         self.switchHistoryWindow = 10
         self.mockTrialsPercent = 1/10
         self.numImgTrials = int((1.0 - self.mockTrialsPercent) * 10)

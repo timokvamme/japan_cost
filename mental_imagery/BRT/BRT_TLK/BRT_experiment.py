@@ -48,7 +48,7 @@ class BRT_experiment(BRT_settings):
     def __init__(self):
         print('running %s' % __class__.__name__)
         self.experiment = "BRT"
-        self.experiment_version = "1.1"#
+        self.experiment_version = "1.2"#
         self.display_settings()
         self.directory_settings()
         self.stimuli_settings()
@@ -183,7 +183,7 @@ class BRT_experiment(BRT_settings):
         self.gabor_center = visual.ImageStim(
                 win=self.win,
                 name='image_1',
-                image=pathjoin(self.stimuliFolder,'gabor_r60_b100.png'), mask=None,
+                image=pathjoin(self.stimuliFolder,'gabor_r100_b100.png'), mask=None,
                 ori=0, pos=self.posCenter, size=self.sizeGabor,
                 color=[1,1,1], colorSpace='rgb', opacity=0.8,
                 flipHoriz=False, flipVert=False,
@@ -750,10 +750,13 @@ class BRT_experiment(BRT_settings):
             self.win.clearBuffer()
             self.stimTextPrime.setPos(self.posFarAbove)
             self.stimTextPrime.draw()
+
             self.prime = visual.BufferImageStim(self.win)
             self.win.clearBuffer()
         else:
             self.win.clearBuffer()
+            s = self.make_imagery_circle(trial)
+            s.draw()
             self.stimTextPrime.setPos(self.gabor_blue_pos)
             self.stimTextPrime.draw()
             self.stimTextPrime.setPos(self.gabor_red_pos)
@@ -778,20 +781,54 @@ class BRT_experiment(BRT_settings):
 
         return bo, ro
 
+    def correct_diff(self, bo, ro):
 
+        diff_bo_ro = round(abs(bo - ro), 1)
+
+        if bo < ro and ro != 1.0:
+            diff = round(abs(1.0 - ro), 1)
+            bo = bo + diff
+            ro = ro + diff
+
+
+        elif ro < bo and bo != 1.0:
+            diff = round(abs(1.0 - bo), 1)
+            bo = bo + diff
+            ro = ro + diff
+
+
+        if bo == ro and ro != 1.0:
+            bo = 1.0
+            ro = 1.0
+
+        return round(bo,1), round(ro,1)
 
     def make_imagery_circle(self,trial):
+        if self.primeText == "simple":
+            self.stimTextPrime.text = trial["prime"]
+        else:
+            if self.viewMode == "googles":
+                self.stimTextPrime.text = "Imagine a %s grating stimulus in the circle" % (
+                    self.stim1 if trial["prime"] == "R" else self.stim2)
 
+            else:
+                self.stimTextPrime.text = "imagine a\n" \
+                                  " %s \n" \
+                                  "grating\n" \
+                                  "stimulus in\nthe circle" % (
+                                      self.stim1 if trial["prime"] == "R" else self.stim2)
 
-        self.stimTextPrime.text = trial["prime"]
         if self.viewMode == "googles":
 
+            self.win.clearBuffer()
             self.imgCircle.draw()
+            self.stimTextPrime.setPos(self.posFarAbove)
             self.stimTextPrime.draw()
             self.imageryInstruct = visual.BufferImageStim(self.win)
             self.win.clearBuffer()
 
         else:
+            self.win.clearBuffer()
             self.stimTextPrime.setPos((self.gabor_blue_pos[0],self.posFarAbove[1]))
             self.imgCircle.setPos(self.gabor_blue_pos)
             self.imgCircle.draw()
@@ -1029,8 +1066,7 @@ class BRT_experiment(BRT_settings):
 
             self.instructionText.draw()
             self.instructionTextFarFarBelow.draw()
-            self.gabor_red.draw()
-            self.gabor_blue.draw()
+            self.gabor_center.draw()
 
 
         else:
@@ -1309,11 +1345,9 @@ class BRT_experiment(BRT_settings):
         :return:
         """
 
-
-        self.calibrationSCHistory = []
-        self.calibrationPerceptHistory = []
-        self.calibrationPerceptValues = [0.0,0.5,1.0]
-        self.calibrationStep = 0.10
+        self.calibrationStep = 0.1
+        self.gabor_blue.opacity = self.gabor_blue_opacity = 1.0
+        self.gabor_red.opacity = self.gabor_red_opacity = 1.0
 
 
         trialList = self.make_trial_list(phase="BRT_calibration")
@@ -1392,7 +1426,6 @@ class BRT_experiment(BRT_settings):
 
                 # Response Dominance Percept 2
                 ansInt = self.get_dominance_percept()
-                if ansInt == "c":self.run_BRHorizontalAdjust()
                 if ansInt == "f":calibrationComplete = True
                 try:  trial["domAns2"] = self.ansTypesName[ansInt]
                 except:pass
@@ -1400,39 +1433,34 @@ class BRT_experiment(BRT_settings):
                 # if the ppt sees the same percept, or a mix of the two, then decrease the contrast for that percept
                 if trial["domAns"] == "blue" and (trial["domAns2"] == "blue" or trial["domAns2"] == "mix"):
                     self.gabor_blue_opacity = self.gabor_blue_opacity  - self.calibrationStep
-                    self.gabor_red_opacity = self.gabor_red_opacity + self.calibrationStep
-                    if self.gabor_red_opacity > 1.0: self.gabor_red_opacity = 1.0
+                    self.gabor_blue_opacity, self.gabor_red_opacity = self.correct_diff(self.gabor_blue_opacity,self.gabor_red_opacity)
                     self.calibrationSCHistory.append("dom_persist")
                     bo, ro = self.find_best_contrast_img(self.gabor_blue_opacity, self.gabor_red_opacity)
                     trial["img"] = pathjoin(self.stimuliFolder, paste("gabor_r", ro, "_", "b", bo, ".png", sep=""))
 
                 elif trial["domAns"] == "red" and (trial["domAns2"] == "red" or trial["domAns2"] == "mix"):
-                    self.gabor_blue_opacity = self.gabor_blue_opacity  + self.calibrationStep
                     self.gabor_red_opacity = self.gabor_red_opacity - self.calibrationStep
-                    if self.gabor_blue_opacity > 1.0: self.gabor_blue_opacity = 1.0
+                    self.gabor_blue_opacity, self.gabor_red_opacity = self.correct_diff(self.gabor_blue_opacity,self.gabor_red_opacity)
                     self.calibrationSCHistory.append("dom_persist")
                     bo, ro = self.find_best_contrast_img(self.gabor_blue_opacity, self.gabor_red_opacity)
                     trial["img"] = pathjoin(self.stimuliFolder, paste("gabor_r", ro, "_", "b", bo, ".png", sep=""))
+
+
 
                 else:
                     # the adaptation effect worked
                     self.calibrationSCHistory.append("switch")
 
 
-                bo = round(self.gabor_blue.opacity,2)
-                ro = round(self.gabor_red.opacity,2)
-                print("blue: %s" % bo)
-                print("red: %s" % ro)
-
                 trial["contrast2_blue"] = self.gabor_blue_opacity
                 trial["contrast2_red"] = self.gabor_red_opacity
 
             csvWriter.writerow(trial.values());file.flush()
             #switch_history = self.calibrationSCHistory[-self.switchHistoryWindow:]
-            switch_history = self.calibrationSCHistory
-
-            percept_history = self.calibrationPerceptHistory[-self.switchHistoryWindow:]
-            if len(switch_history) > self.numTrialsMinCalibrationBR -1 and switch_history.count("switch") >= self.minSwitches:
+            switch_history = self.calibrationSCHistory[-4:]
+            print(switch_history)
+            #percept_history = self.calibrationPerceptHistory[-self.switchHistoryWindow:]
+            if len(self.calibrationSCHistory) > self.numTrialsMinCalibrationBR -1 and switch_history.count("switch") >= self.minSwitches:
                 calibrationComplete = True
 
 
@@ -1440,12 +1468,10 @@ class BRT_experiment(BRT_settings):
                 stim = self.make_stimulus(trial)
                 no += 1
 
-            bo = round(self.gabor_blue.opacity, 2)
-            ro = round(self.gabor_red.opacity, 2)
+            bo = round(self.gabor_blue_opacity, 2)
+            ro = round(self.gabor_red_opacity, 2)
             print("blue: %s" % bo)
             print("red: %s" % ro)
-
-
 
     def run_hfpi_calibrationBR(self):
         """
@@ -1786,17 +1812,17 @@ class BRT_experiment(BRT_settings):
                 stimFix.draw()
                 win.flip()
 
-            # # Cue
-            if no < self.instructImgOnFirstNTrials:
-                waitTill = myClock.getTime() + self.cueTimeLong
-            else:
-                waitTill = myClock.getTime() + self.cueTime
-
-
-            while waitTill > myClock.getTime():
-                prime.draw()
-                #if "instruct" in phase and self.primeText != "simple":instructionText.draw()
-                win.flip()
+            # # # Cue
+            # if no < self.instructImgOnFirstNTrials:
+            #     waitTill = myClock.getTime() + self.cueTimeLong
+            # else:
+            #     waitTill = myClock.getTime() + self.cueTime
+            #
+            #
+            # while waitTill > myClock.getTime():
+            #     prime.draw()
+            #     #if "instruct" in phase and self.primeText != "simple":instructionText.draw()
+            #     win.flip()
 
             # Imagine
             waitTill = myClock.getTime() + self.imagineTime
@@ -1817,6 +1843,7 @@ class BRT_experiment(BRT_settings):
                 trial["vividrt"] = rt
 
             # Binocular Rivalry - stimulus
+            win.setMouseVisible(False)
             waitTill = myClock.getTime() + self.stimTime
             while waitTill > myClock.getTime():
                 stim.draw()
@@ -1866,7 +1893,7 @@ def run_experiment():
             BRT.run_BRT_img_introduction()
 
         if BRT.calibrationBR:
-            BRT.run_hfpi_calibrationBR()
+            BRT.run_adaptation_calibration_merlinBR()
 
         if BRT.switchRateTest:
             BRT.run_BRT_switch_rate(phase="BRT_switchrate")
